@@ -15,8 +15,9 @@ class OwaClient(discord.Client):
 
     def _load_question_csv(self, csv_dir:str):
         csv_dir = Path(csv_dir)
-        with open(csv_dir, "r") as f:
-            data = csv.reader(f)
+        with open(csv_dir, "r") as csv_file:
+            data = csv.reader(csv_file)
+            headers = next(data, None)
             for row in data:
                 self._questions.append(row[0])
 
