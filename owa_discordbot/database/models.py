@@ -34,6 +34,8 @@ class LangEnum(enum.Enum):
 class Question(BaseModel):
     __tablename__ = "questions"
 
+    DEFAULT_LANG = "EN"
+
     text = Column(String(1024))
     lang = Column(Enum(LangEnum))
     question_type = Column(String(32))
@@ -42,14 +44,19 @@ class Question(BaseModel):
         return self.text
 
     def __repr__(self):
-        return f"<Question ({self.id}): [lang: {self.lang.name}, tag: {self.question_type}] {self.text}>"
+        return f"<Question ({self.id}): [lang: {self.lang.name}, type: {self.question_type}] {self.text}>"
 
     @classmethod
-    def get_random(cls):
+    def get_random(cls, q_type=None, lang=None):
         Question = cls
-        return (
-            Session.query(Question.text, Question.lang)
-            .order_by(func.random())
-            .limit(1)
-            .first()
-        )._asdict()
+        if lang is None:
+            lang = LangEnum[cls.DEFAULT_LANG]
+        else:
+            lang = LangEnum[lang.upper()]
+        query = Session.query(
+            Question.text, Question.lang, Question.question_type
+        ).filter(Question.lang == lang)
+        if q_type:
+            query = query.filter(Question.question_type == q_type)
+        result = query.order_by(func.random()).limit(1).first()
+        return result._asdict() if result else None
