@@ -18,7 +18,6 @@ LOG_LEVEL = getattr(logging, LOG_LEVEL)
 OWA_CONFIG = {
     "prefix": os.getenv("OWA_PREFIX"),
     "discord_token": os.getenv("OWA_DISCORD_TOKEN"),
-    "csv_dir": os.getenv("OWA_QUESTIONS_CSV"),
 }
 
 DB_DEBUG = os.getenv("DB_DEBUG", default="true").lower() == "true"

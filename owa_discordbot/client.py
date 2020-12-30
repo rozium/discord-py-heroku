@@ -11,7 +11,7 @@ class OwaClient(discord.Client):
     Subclass of discord client for Owa Bot.
     """
 
-    NO_QUESTION_MSG = "Sorry, no question matching the request was found."
+    NO_QUESTION_MSG = "Sorry, no question matching your request was found."
 
     def __init__(self, config=None, db=None):
         super().__init__()
