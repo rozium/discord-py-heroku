@@ -1,6 +1,6 @@
 import argparse
 import csv
-from owa_discordbot.logging import owa_logger as logger
+from owa_discordbot.logger import owa_logger as logger
 from owa_discordbot.database import get_session
 from owa_discordbot.database.models import Question, LangEnum
 
