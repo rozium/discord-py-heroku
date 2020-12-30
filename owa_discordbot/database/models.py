@@ -1,6 +1,7 @@
 import enum
 
 from sqlalchemy import (
+    func,
     Column,
     Integer,
     String,
@@ -9,16 +10,20 @@ from sqlalchemy import (
     Enum,
     UniqueConstraint,
 )
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base, AbstractConcreteBase
 
+from owa_discordbot.database import get_session
+
 Base = declarative_base()
+Session = get_session()
 
 
 class BaseModel(AbstractConcreteBase, Base):
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, unique=True)
 
     def __repr__(self):
-        f"<{self.__class__.__name__} ({self.id})>"
+        return f"<{self.__class__.__name__} ({self.id})>"
 
 
 class LangEnum(enum.Enum):
@@ -26,35 +31,25 @@ class LangEnum(enum.Enum):
     ID = 2
 
 
-class QuestionType(BaseModel):
-    __tablename__ = "question_types"
-
-    name = Column(String(32))
-
-    def __repr__(self):
-        f"<QuestionType ({self.id}): {self.text} ({self.tag})."
-
-
-class Questions(BaseModel):
+class Question(BaseModel):
     __tablename__ = "questions"
 
     text = Column(String(1024))
     lang = Column(Enum(LangEnum))
+    question_type = Column(String(32))
+
+    def __str__(self):
+        return self.text
 
     def __repr__(self):
-        f"<Question ({self.id}): [{self.lang}] {self.text}."
+        return f"<Question ({self.id}): [lang: {self.lang.name}, tag: {self.question_type}] {self.text}>"
 
-
-class QuestionTypeMapping(BaseModel):
-    __tablename__ = "question_type_mapping"
-
-    question_id = Column(Integer, ForeignKey("questions.id"))
-    type_id = Column(Integer, ForeignKey("question_types.id"))
-
-    __table_args__ = (
-        UniqueConstraint(
-            "question_id",
-            "type_id",
-            name="_question_type_mapping_uc",
-        ),
-    )
+    @classmethod
+    def get_random(cls):
+        Question = cls
+        return (
+            Session.query(Question.text, Question.lang)
+            .order_by(func.random())
+            .limit(1)
+            .first()
+        )._asdict()
