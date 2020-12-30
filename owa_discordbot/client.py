@@ -5,6 +5,9 @@ from typing import List
 
 import discord
 
+from owa_discordbot.logger import owa_logger
+
+
 class OwaClient(discord.Client):
     """
     Subclass of discord client for Owa Bot.
@@ -31,7 +34,7 @@ class OwaClient(discord.Client):
         """
         Client behavior on successful deployment.
         """
-        print(f"Logged in as {self.user}!")
+        owa_logger.info("Logged in as %s!", self.user)
 
     async def on_message(self, message):
         """

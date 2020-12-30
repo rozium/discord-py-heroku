@@ -21,4 +21,5 @@ OWA_CONFIG = {
     "csv_dir": os.getenv("OWA_QUESTIONS_CSV"),
 }
 
+DB_DEBUG = os.getenv("DB_DEBUG", default="true").lower() == "true"
 DB_HOST = os.getenv("DB_HOST")
