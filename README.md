@@ -1,29 +1,20 @@
-# Hosting your discord.py bot on Heroku
-### What are the prerequisites for this guide?
-You must have an account for Discord [[Link](https://discordapp.com/developers/applications/)], GitHub [[Link](https://github.com/join)] , and Heroku [[Link](https://signup.heroku.com/)].
+# Description
 
-### How do I create a bot and get a bot token?
-* Create an application in the developer portal by clicking [here](https://discordapp.com/developers/applications/)
-* Open up your new application and click 'Add Bot' under the Bot settings to create your bot.
-* After creating the bot, click the 'Copy' button under the title Token. Take note of your token as you will need it later.
+Discord bot for helping conversation by generating questions.
 
-### How to fork the repository and set it up to work with Heroku?
-* Fork a copy of this repository by clicking the 'Fork' on the upper right-hand.
-* Create an application for Heroku by clicking [here](https://dashboard.heroku.com/new-app).
-* Under 'Deploy', do the following:
-  * Deployment Method => Connect your GitHub
-  * App connected to GitHub => Search for the forked repository
-  * Automatic Deploy => Enable Automatic Deploy (to redeploy after every commit)
-* Under 'Settings', click on 'Reveal Config Vars' and enter the following:
-  * KEY => DISCORD_TOKEN
-  * VALUE => (Enter the bot token that you copied from the developer portal)
-  * Click the 'Add' button after entering all of this information.
-* Under 'Resources', do the following:
-  * Click on the 'Pencil' icon.
-  * Switch the worker from off to on.
-  * Click 'Confirm' to finalize the decision.
-  * NOTE: You are allocated 550 free Dyno hours, which will not last the entire month. However, if you provide a credit card to verify your identity, you are given an additional 450 hours, which will allow your bot to run indefinitely.
+# Setup
 
-# TO-DO LIST
-* Revise the tutorial to be easier to understand for any user.
-* Add some images for following along with the process.
+## Local deployment
+
+1. Install the dependencies using requirements.txt [`pip install -e .`] or poetry [`poetry intall -v`]. If using poetry, remember to activate the shell using `poetry shell`.
+2. Create a `.env` file in the repo root by copying the `.env.template`. The `.env` file *should not be commited* and is already ignored in `.gitignore`.
+3. Edit the `DB_HOST` variable in `.env`. It's possible to use other SQL backends (e.g. MySQL, PostgreSQL).
+2. Create the database by running `python owa_discordbot/scripts/db/migrate.py`.
+3. Import the questions from a csv file by running `python owa_discordbot/scripts/db/import_csv.py [csv directory]`. A csv file is already included in `data/raw/questions.csv`, but you can create your own by following its headers.
+4. Set your bot token and command-prefix in `.env` as well as other available settings.
+5. Run the bot by running `python owa_discordbot/main.py`.
+
+# Notes
+
+- The question table does not have unique constraint on its content, so duplicate questions may exist.
+- The database module uses sqlalchemy framework which not async. Since the bot client has some async functions, concurrent calls may experience blocking or inconsistency. But since currently the bot only performs read operations, the inconsistency concern can be deferred for now.
