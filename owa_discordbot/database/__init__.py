@@ -8,4 +8,7 @@ Session = sessionmaker(bind=engine)
 
 
 def get_session():
+    """
+    Wrapper for invoking sessionmaker
+    """
     return Session()

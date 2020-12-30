@@ -13,8 +13,7 @@ DEBUG = os.getenv("DEBUG", default="true").lower() == "true"
 LOG_LEVEL = os.getenv("LOG_LEVEL", default="debug").upper()
 if LOG_LEVEL not in ["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
     raise ValueError(f"Invalid log level: {LOG_LEVEL}")
-else:
-    LOG_LEVEL = getattr(logging, LOG_LEVEL)
+LOG_LEVEL = getattr(logging, LOG_LEVEL)
 
 OWA_CONFIG = {
     "prefix": os.getenv("OWA_PREFIX"),
