@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "owa-discordbot"
-version = "0.1.0"
+version = "0.2.0"
 description = "Custom bot for various fun activities!"
 authors = ["rozium"]
 
