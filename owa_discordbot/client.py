@@ -30,12 +30,30 @@ class OwaClient(discord.Client):
         """
         owa_logger.info("Logged in as %s!", self.user)
 
+    async def _send_help(self, message):
+        await message.channel.send(
+            f"-- OwaOwa Bot v0.1 --\n"
+            f"Prefix: `{self._prefix}`\n\n"
+            f"Commands:\n"
+            f"- `question [type]`, `q [type]`: Request random question.\n"
+            f"\t\tAvailable types: `topic`, `wyr` (would you rather).\n"
+            f"- `help`, `h`: Show this message.\n\n"
+            f"Example: `{self._prefix}help`"
+        )
+
+    async def _send_unknown_cmd(self, complete_cmd, message):
+        await message.channel.send(
+            f"Unknown command: {complete_cmd}.\n"
+            f"Use `{self._prefix} help` to see available commands."
+        )
+
     async def on_message(self, message):
         """
         Handle user inputs.
         """
         if message.content.startswith(self._prefix):
-            cmd = message.content.split(self._prefix)[1]
+            user_inputs = message.content.split(" ")
+            cmd = user_inputs[1]
             if cmd in ["q", "question"]:
                 question = Question.get_random()
                 owa_logger.debug("Queried question: %s", question)
@@ -45,12 +63,9 @@ class OwaClient(discord.Client):
                     await message.channel.send(self.NO_QUESTION_MSG)
 
             elif cmd in ["help", "h"]:
-                await message.channel.send(
-                    f"-- OwaOwa Bot v0.1 --\n"
-                    f"Prefix: `{self._prefix}`\n\n"
-                    f"Command:\n`q` for random question\n`h` for help\n\n"
-                    f"Example: `{self._prefix}help`"
-                )
+                await self._send_help(message)
+            else:
+                await self._send_unknown_cmd(cmd, message)
 
     def run(self, *args, **kwargs):
         return super().run(self._discord_token, *args, **kwargs)
