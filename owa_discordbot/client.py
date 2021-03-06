@@ -55,13 +55,18 @@ class OwaClient(discord.Client):
             user_inputs = message.content.split(" ")
             cmd = user_inputs[1]
             if cmd in ["q", "question"]:
-                question = Question.get_random()
-                owa_logger.debug("Queried question: %s", question)
-                if question:
-                    await message.channel.send(question.get("text"))
+                if len(user_inputs) > 3:
+                    self._send_help()
                 else:
-                    await message.channel.send(self.NO_QUESTION_MSG)
-
+                    try:
+                        question = Question.get_random(q_type=user_inputs[2])
+                    except IndexError:
+                        question = Question.get_random()
+                    owa_logger.debug("Queried question: %s", question)
+                    if question:
+                        await message.channel.send(question.get("text"))
+                    else:
+                        await message.channel.send(self.NO_QUESTION_MSG)
             elif cmd in ["help", "h"]:
                 await self._send_help(message)
             else:
